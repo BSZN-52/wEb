@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог фильмов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 Каталог фильмов</h1>
+            <p class="subtitle">Коллекция из {{ total_movies }} лучших фильмов всех времён</p>
+            <nav class="header-nav">
+                {% if current_user.is_authenticated %}
+                    <span>Привет, {{ current_user.username }}!</span>
+                    <a href="{{ url_for('profile') }}">Профиль</a>
+                    <a href="{{ url_for('logout') }}">Выход</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Вход</a>
+                    <a href="{{ url_for('register') }}">Регистрация</a>
+                {% endif %}
+            </nav>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="search-section">
+            <form method="GET" action="/" class="search-form">
+                <input type="text" name="search" placeholder="Поиск..." value="{{ search_query }}" class="search-input">
+                <button type="submit" class="search-btn">🔍 Найти</button>
+            </form>
+
+            <div class="filter-section">
+                <label>Сортировка:</label>
+                <a href="/?sort=rating{% if search_query %}&search={{ search_query }}{% endif %}" 
+                   class="filter-btn {% if sort_by == 'rating' %}active{% endif %}">⭐ По рейтингу</a>
+                <a href="/?sort=year{% if search_query %}&search={{ search_query }}{% endif %}" 
+                   class="filter-btn {% if sort_by == 'year' %}active{% endif %}">📅 По году</a>
+                <a href="/?sort=title{% if search_query %}&search={{ search_query }}{% endif %}" 
+                   class="filter-btn {% if sort_by == 'title' %}active{% endif %}">🔤 По названию</a>
+            </div>
+        </div>
+
+        <div class="movies-grid">
+            {% for movie in movies %}
+            <div class="movie-card">
+                <div class="movie-header">
+                    <h2 class="movie-title">{{ movie.title }}</h2>
+                    <span class="rating excellent">⭐ {{ movie.rating }}</span>
+                </div>
+                <div class="movie-info">
+                    <p><strong>Год:</strong> {{ movie.year }}</p>
+                    <p><strong>Жанр:</strong> <span class="genre-tag">{{ movie.genre }}</span></p>
+                </div>
+                <div class="movie-actions">
+                    <a href="{{ url_for('movie_detail', movie_id=movie.id) }}" class="btn-view">Подробнее</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

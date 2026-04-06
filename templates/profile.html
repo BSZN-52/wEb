@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>👤 Профиль</h1>
+            <nav class="header-nav">
+                <a href="{{ url_for('index') }}">← На главную</a>
+                <a href="{{ url_for('logout') }}">Выход</a>
+            </nav>
+        </header>
+        <div class="profile-container">
+            <div class="profile-info">
+                <h2>{{ user.username }}</h2>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Регистрация:</strong> {{ user.created_at.strftime('%d.%m.%Y') }}</p>
+                <p><strong>Комментариев:</strong> {{ comments_with_movies|length }}</p>
+            </div>
+            <div class="user-comments-section">
+                <h2>Ваши комментарии</h2>
+                {% if comments_with_movies %}
+                    {% for item in comments_with_movies %}
+                    <div class="user-comment-card">
+                        <div class="comment-movie-title">
+                            <a href="{{ url_for('movie_detail', movie_id=item.movie.id) }}">
+                                🎬 {{ item.movie.title }} ({{ item.movie.year }})
+                            </a>
+                            {% if item.comment.rating %}
+                                <span class="comment-rating">⭐ {{ item.comment.rating }}/10</span>
+                            {% endif %}
+                        </div>
+                        <div class="comment-text">{{ item.comment.content }}</div>
+                        <div class="comment-footer">
+                            <span class="comment-date">{{ item.comment.created_at.strftime('%d.%m.%Y') }}</span>
+<form method="POST" action="{{ url_for('delete_comment', comment_id=item.comment.id) }}" style="display:inline;">
+                                <button type="submit" class="btn-delete-small">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>У вас пока нет комментариев</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
