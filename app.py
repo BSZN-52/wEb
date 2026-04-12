@@ -6,7 +6,7 @@ from datetime import datetime
 from movies_data import movies
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here-change-this-123456'
+app.config['SECRET_KEY'] = 'Brasil&-^'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
